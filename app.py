@@ -8,11 +8,9 @@ st.set_page_config(
 
 st.title("🔍 Interface Fouille de Données")
 
-# Initialiser le dataset dans la session
 if "df" not in st.session_state:
     st.session_state.df = None
 
-# Navigation en 3 onglets
 tab1, tab2, tab3 = st.tabs([
     "📊 Volet 1 — Prétraitement",
     "🔵 Volet 2 — Clustering",

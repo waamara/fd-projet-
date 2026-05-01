@@ -37,6 +37,10 @@ def show_preprocessing():
         st.write("**Statistiques descriptives :**")
         st.dataframe(df.describe())
 
+    # Mode
+    st.write("**Mode de chaque colonne :**")
+    st.dataframe(df.mode().iloc[0].rename("Mode"))
+
     # ── 3. NETTOYAGE ─────────────────────────────────────────────
     st.subheader("3. Nettoyage — Valeurs Manquantes")
     missing = df.isnull().sum()
@@ -91,23 +95,32 @@ def show_preprocessing():
     st.subheader("5. Visualisation")
     num_cols = df.select_dtypes(include=np.number).columns.tolist()
 
-    col_box, col_scatter = st.columns(2)
+    # Tous les boxplots sur un seul graphique
+    st.write("**Boxplots de toutes les colonnes numériques**")
+    fig, ax = plt.subplots(figsize=(7, 3))
+    df[num_cols].boxplot(ax=ax)
+    ax.set_title("Boxplots")
+    ax.tick_params(axis='x', rotation=45)
+    plt.tight_layout()
+    st.pyplot(fig)
 
-    with col_box:
-        st.write("**Boxplot**")
-        col_b = st.selectbox("Colonne pour Boxplot", num_cols, key="boxplot")
-        fig, ax = plt.subplots()
-        sns.boxplot(y=df[col_b], ax=ax, color="steelblue")
-        ax.set_title(f"Boxplot — {col_b}")
-        st.pyplot(fig)
+    # Boxplot individuel
+    st.write("**Boxplot individuel**")
+    col_b = st.selectbox("Colonne pour Boxplot", num_cols, key="boxplot")
+    fig2, ax2 = plt.subplots(figsize=(4, 3))
+    sns.boxplot(y=df[col_b], ax=ax2, color="steelblue")
+    ax2.set_title(f"Boxplot — {col_b}")
+    plt.tight_layout()
+    st.pyplot(fig2)
 
-    with col_scatter:
-        st.write("**Scatter Plot**")
-        col_x = st.selectbox("Axe X", num_cols, key="scatter_x")
-        col_y = st.selectbox("Axe Y", num_cols, key="scatter_y")
-        fig2, ax2 = plt.subplots()
-        ax2.scatter(df[col_x], df[col_y], alpha=0.6, color="coral")
-        ax2.set_xlabel(col_x)
-        ax2.set_ylabel(col_y)
-        ax2.set_title(f"Scatter — {col_x} vs {col_y}")
-        st.pyplot(fig2)
+    # Scatter Plot
+    st.write("**Scatter Plot**")
+    col_x = st.selectbox("Axe X", num_cols, key="scatter_x")
+    col_y = st.selectbox("Axe Y", num_cols, key="scatter_y")
+    fig3, ax3 = plt.subplots(figsize=(4, 3))
+    ax3.scatter(df[col_x], df[col_y], alpha=0.6, color="coral", s=20)
+    ax3.set_xlabel(col_x)
+    ax3.set_ylabel(col_y)
+    ax3.set_title(f"Scatter — {col_x} vs {col_y}")
+    plt.tight_layout()
+    st.pyplot(fig3)
